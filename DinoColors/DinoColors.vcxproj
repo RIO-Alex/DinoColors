@@ -29,6 +29,10 @@
   <ItemGroup>
     <ClCompile Include="DinoColors.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Configs\config.json" />
+    <None Include="..\Configs\PluginInfo.json" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -166,7 +170,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;PERMISSIONS_EXPORTS;_WINDOWS;_USRDLL;ARK_EXPORTS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;PERMISSIONS_ARK;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\include;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\Logger;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\Ark;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\API\UE;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\API\Helpers;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\API\ARK;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public\API;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Core\Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\AsaApi\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\include;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\AsaApi\Core\Public\Logger;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public\Ark;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public\API\UE;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public\API\Helpers;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public\API\ARK;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public\API;C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\\AsaApi\Core\Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -181,7 +185,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\curl_x64-windows\lib;C:\Projects\vcpkg\vcpkg\ServerAPI\AsaApi\Libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\MyWork\Plugins\ASA\_ClonedGits\AsaApi\out_lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ASA|x64'">

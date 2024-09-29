@@ -8,6 +8,12 @@ DECLARE_HOOK(APrimalDinoCharacter_BeginPlay, void, APrimalDinoCharacter*);
 
 nlohmann::json config;
 
+void SendRconReply(RCONClientConnection* rcon_connection, int packet_id, const FString& msg)
+{
+	FString reply = msg + "\n";
+	rcon_connection->SendMessageW(packet_id, 0, &reply);
+}
+
 int GetRandomNumber(int min, int max)
 {
 	const int n = max - min + 1;
@@ -47,7 +53,7 @@ void Hook_APrimalDinoCharacter_BeginPlay(APrimalDinoCharacter* _this)
 	APrimalDinoCharacter_BeginPlay_original(_this);
 
 	// Don't change color of tamed dinos
-	if (_this->TargetingTeamField() < 50000)
+	if (_this->TargetingTeamField() < 50000 && config.value("EnableColors", true))
 	{
 		RandomizeDinoColor(_this);
 	}
@@ -55,16 +61,65 @@ void Hook_APrimalDinoCharacter_BeginPlay(APrimalDinoCharacter* _this)
 
 void ReadConfig()
 {
-	const std::string config_path = AsaApi::Tools::GetCurrentDir() + "/ArkApi/Plugins/DinoColors/colors.json";
-	std::ifstream file{ config_path };
+	const std::string DefaultConfigPath = AsaApi::Tools::GetCurrentDir() + "/ArkApi/Plugins/DinoColors/config.json";
+	std::ifstream file{ DefaultConfigPath };
 	if (!file.is_open())
-		throw std::runtime_error("Can't open colors.json");
+		throw std::runtime_error("Can't open config.json");
 
 	file >> config;
 
 	file.close();
+
+	std::string OverrideConfigPath = config.value("ConfigPathOverride", "");
+	if (!OverrideConfigPath.empty())
+	{
+		std::ifstream OverrideConfig{ OverrideConfigPath };
+		if (!OverrideConfig.is_open())
+			throw std::runtime_error("Can't open config.json from ConfigPathOverride parameter.");
+
+		OverrideConfig >> config;
+
+		OverrideConfig.close();
+	}
 }
 
+void ReloadConfig_RCON(RCONClientConnection* rcon_connection, RCONPacket* rcon_packet, UWorld*)
+{
+	FString rep = L"Failed to reload config";
+
+	try
+	{
+		ReadConfig();
+	}
+	catch (const std::exception& error)
+	{
+		SendRconReply(rcon_connection, rcon_packet->Id, rep);
+		Log::GetLog()->error(error.what());
+		return;
+	}
+
+	rep = L"Reloaded config";
+	SendRconReply(rcon_connection, rcon_packet->Id, rep);
+}
+
+void ReloadConfig_Cmd(APlayerController* player, FString* Command, bool)
+{
+	FString rep = L"Failed to reload config";
+
+	try
+	{
+		ReadConfig();
+	}
+	catch (const std::exception& error)
+	{
+		AsaApi::GetApiUtils().SendServerMessage(static_cast<AShooterPlayerController*>(player), FColorList::Green, rep.ToString().c_str());
+		Log::GetLog()->error(error.what());
+		return;
+	}
+
+	rep = L"Reloaded config";
+	AsaApi::GetApiUtils().SendServerMessage(static_cast<AShooterPlayerController*>(player), FColorList::Green, rep.ToString().c_str());
+}
 
 void Load()
 {
@@ -83,11 +138,15 @@ void Load()
 	srand(time(nullptr));
 
 	AsaApi::GetHooks().SetHook("APrimalDinoCharacter.BeginPlay()", &Hook_APrimalDinoCharacter_BeginPlay, &APrimalDinoCharacter_BeginPlay_original);
+	AsaApi::GetCommands().AddRconCommand("dc.reload", &ReloadConfig_RCON);
+	AsaApi::GetCommands().AddConsoleCommand("DCReloadConfig", &ReloadConfig_Cmd);
 }
 
 void Unload()
 {
 	AsaApi::GetHooks().DisableHook("APrimalDinoCharacter.BeginPlay()", &Hook_APrimalDinoCharacter_BeginPlay);
+	AsaApi::GetCommands().RemoveRconCommand("dc.reload");
+	AsaApi::GetCommands().RemoveConsoleCommand("DCReloadConfig");
 }
 
 BOOL APIENTRY DllMain(HMODULE, DWORD ul_reason_for_call, LPVOID)

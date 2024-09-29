@@ -1,5 +1,7 @@
 {
-  "Colors":[
+  "ConfigPathOverride": "",
+  "EnableColors": true,
+  "Colors": [
     1,
     2,
     3,
